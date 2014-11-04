@@ -2,65 +2,88 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.phonegap.plugins.barcodescanner"
     version="2.0.0">
-
+    
     <name>BarcodeScanner</name>
     <description>You can use the BarcodeScanner plugin to scan different types of barcodes (using the device's camera) and get the metadata encoded in them for processing within your application.</description>
     <license>MIT</license>
-
+    
     <repo>https://github.com/wildabeast/BarcodeScanner</repo>
-    <issue>https://github.com/wildabeast/BarcodeScanner/issues</issue> 
+    <issue>https://github.com/wildabeast/BarcodeScanner/issues</issue>
     
     <engines>
         <engine name="cordova" version=">=3.0.0" />
-    </engines>    
-
+    </engines>
+    
     <js-module src="www/barcodescanner.js" name="BarcodeScanner">
         <clobbers target="cordova.plugins.barcodeScanner" />
     </js-module>
-
+    
     <!-- ios -->
     <platform name="ios">
         <!-- Cordova >= 2.8 -->
         <config-file target="config.xml" parent="/*">
             <feature name="BarcodeScanner">
-                <param name="ios-package" value="CDVBarcodeScanner" />
+                <param name="ios-package" value="ZBarScanner" />
             </feature>
         </config-file>
-
-        <resource-file src="src/ios/scannerOverlay.xib" />
-
-        <header-file src="src/ios/zxing-all-in-one.h" />
-
-        <source-file src="src/ios/CDVBarcodeScanner.mm" compiler-flags="-fno-objc-arc" />
-        <source-file src="src/ios/zxing-all-in-one.cpp" />
-
+        
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarCameraSimulator.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarCaptureReader.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarHelpController.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarImage.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarImageScanner.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarReaderController.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarReaderView.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarReaderViewController.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarSDK.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/ZBarSymbol.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Decoder.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Exception.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Image.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/ImageScanner.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Processor.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Scanner.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Symbol.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Video.h" />
+        <header-file src="src/ios/ZBarSDK/Headers/ZBarSDK/zbar/Window.h" />
+        
+        <header-file src="src/ios/ZBarScanner.h" />
+        <header-file src="src/ios/ZBarScannerController.h" />
+        
+        <source-file src="src/ios/ZBarScanner.m" />
+        <source-file src="src/ios/ZBarScannerController.m" />
+        
+        <source-file src="src/ios/ZBarSDK/libzbar.a" framework="true" />
+        
         <framework src="libiconv.dylib" />
         <framework src="AVFoundation.framework" />
-        <framework src="AssetsLibrary.framework" />
+        <!-- <framework src="AssetsLibrary.framework" /> -->
+        <framework src="CoreMedia.framework" />
         <framework src="CoreVideo.framework" />
         <framework src="QuartzCore.framework" />
     </platform>
-
+    
     <!-- android -->
     <platform name="android">
-
+        
         <source-file src="src/android/com/phonegap/plugins/barcodescanner/BarcodeScanner.java" target-dir="src/com/phonegap/plugins/barcodescanner" />
         <!--
-        <source-file src="R.java" target-dir="src/com/google/zxing/client/android" />
-        -->
+         <source-file src="R.java" target-dir="src/com/google/zxing/client/android" />
+         -->
         
         <!--
-        <config-file target="res/xml/plugins.xml" parent="/plugins">
-            <plugin name="BarcodeScanner" value="com.phonegap.plugins.barcodescanner.BarcodeScanner"/>
-        </config-file>
-        -->
-
+         <config-file target="res/xml/plugins.xml" parent="/plugins">
+         <plugin name="BarcodeScanner" value="com.phonegap.plugins.barcodescanner.BarcodeScanner"/>
+         </config-file>
+         -->
+        
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="BarcodeScanner">
                 <param name="android-package" value="com.phonegap.plugins.barcodescanner.BarcodeScanner" />
             </feature>
         </config-file>
-
+        
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity
                 android:name="com.google.zxing.client.android.CaptureActivity"
@@ -88,21 +111,21 @@
                 </intent-filter>
             </activity>
         </config-file>
-
+        
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.CAMERA" />
             <uses-permission android:name="android.permission.FLASHLIGHT" />
             <!-- Not required to allow users to work around this -->
             <uses-feature android:name="android.hardware.camera" android:required="false" />
         </config-file>
-
+        
         <source-file src="src/android/com.google.zxing.client.android.captureactivity.jar" target-dir="libs"/>
-
+        
         <!--
-            LibraryProject/res/*.*
-            search: (src/android/LibraryProject/(.+?)/[^/]+)$
-            replace: <source-file src="$1" target-dir="$2"/>
-        -->
+         LibraryProject/res/*.*
+         search: (src/android/LibraryProject/(.+?)/[^/]+)$
+         replace: <source-file src="$1" target-dir="$2"/>
+         -->
         
         <source-file src="src/android/LibraryProject/res/drawable/launcher_icon.png" target-dir="res/drawable"/>
         <source-file src="src/android/LibraryProject/res/drawable/share_via_barcode.png" target-dir="res/drawable"/>
@@ -161,7 +184,7 @@
         <source-file src="src/android/LibraryProject/res/values-zh-rCN/strings.xml" target-dir="res/values-zh-rCN"/>
         <source-file src="src/android/LibraryProject/res/values-zh-rTW/strings.xml" target-dir="res/values-zh-rTW"/>
         <source-file src="src/android/LibraryProject/res/xml/preferences.xml" target-dir="res/xml"/>
-
+        
         <!-- plugman cannot merge - prepare manual merge -->
         <config-file target="res/values/strings.xml" parent="/resources">
             <string name="app_picker_name">Applications</string>
@@ -285,7 +308,7 @@
             <string name="wifi_type_label">Type</string>
         </config-file>
     </platform>
-
+    
     <platform name="windows8">
         <js-module src="src/windows8/BarcodeScannerProxy.js" name="BarcodeScannerProxy">
             <merges target="" />
@@ -296,26 +319,26 @@
         <framework src="src/windows8/lib/ZXing.winmd" custom="true" />
         <framework src="src/windows8/lib/WinRTBarcodeReader.winmd" custom="true" />
     </platform>
-
+    
     <!-- Windows Phone 8 -->
     <platform name="wp8">
-
+        
         <config-file target="config.xml" parent="/*">
             <feature name="BarcodeScanner">
                 <param name="wp-package" value="BarcodeScanner"/>
             </feature>
         </config-file>
-
+        
         <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
             <Capability Name="ID_CAP_ISV_CAMERA" />
         </config-file>
-
+        
         <framework src="src/wp8/lib/zxing.wp8.0.dll" custom="true" />
-
+        
         <source-file src="src/wp8/BarcodeScanner.cs" />
         <source-file src="src/wp8/BarcodeScannerTask.cs" />
         <source-file src="src/wp8/BarcodeScannerUI.xaml" />
         <source-file src="src/wp8/BarcodeScannerUI.xaml.cs" />
-
+        
     </platform>
 </plugin>
