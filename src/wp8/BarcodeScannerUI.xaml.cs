@@ -20,6 +20,7 @@ namespace WPCordovaClassLib.Cordova.Commands
     using Microsoft.Phone.Tasks;
 
     using ZXing;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Class that represents UI for barcode scanner.
@@ -96,7 +97,10 @@ namespace WPCordovaClassLib.Cordova.Commands
                         {
                             this.camera.FlashMode = FlashMode.Off;
                             this.camera.Focus();
-                            while (result == null)
+
+                            var scanTimer = new DispatcherTimer();
+                            scanTimer.Interval = TimeSpan.FromMilliseconds(250);
+                            scanTimer.Tick += (o, r) =>
                             {
                                 var cameraBuffer = new WriteableBitmap(
                                     (int)camera.PreviewResolution.Width,
@@ -104,10 +108,8 @@ namespace WPCordovaClassLib.Cordova.Commands
 
                                 camera.GetPreviewBufferArgb32(cameraBuffer.Pixels);
                                 cameraBuffer.Invalidate();
-
-                                reader.Options.TryHarder = true;
                                 reader.Decode(cameraBuffer);
-                            }
+                            };
                         });
             }
             else
@@ -124,15 +126,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                 camera.Focus();
             }
         }
-        /// <summary>
-        /// The user has clicked on Cancel and want to exit scan
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CancelClicked(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.GoBack();
-        }
+        
 
         /// <summary>
         /// Called when reader find barcode.
@@ -164,6 +158,11 @@ namespace WPCordovaClassLib.Cordova.Commands
                 this.reader.ResultFound -= this.ReaderResultFound;
                 this.reader = null;
             }
+        }
+
+        private void CancelClicked(object sender, RoutedEventArgs e)
+        {            
+            NavigationService.GoBack();
         }
     }
 }
