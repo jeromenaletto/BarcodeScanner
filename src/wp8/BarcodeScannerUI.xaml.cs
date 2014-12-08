@@ -43,6 +43,11 @@ namespace WPCordovaClassLib.Cordova.Commands
         private PhotoCamera camera;
 
         /// <summary>
+        /// Timer de scan
+        /// </summary>
+        private DispatcherTimer scanTimer = new DispatcherTimer();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BarcodeScannerUI"/> class.
         /// This implementation not use camera autofocus.
         /// </summary>
@@ -98,8 +103,8 @@ namespace WPCordovaClassLib.Cordova.Commands
                             this.camera.FlashMode = FlashMode.Off;
                             this.camera.Focus();
 
-                            var scanTimer = new DispatcherTimer();
-                            scanTimer.Interval = TimeSpan.FromMilliseconds(250);
+                            this.scanTimer = new DispatcherTimer();
+                            scanTimer.Interval = TimeSpan.FromMilliseconds(500);
                             scanTimer.Tick += (o, r) =>
                             {
                                 var cameraBuffer = new WriteableBitmap(
@@ -110,6 +115,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                                 cameraBuffer.Invalidate();
                                 reader.Decode(cameraBuffer);
                             };
+                            scanTimer.Start();
                         });
             }
             else
@@ -137,6 +143,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             VibrateController.Default.Start(TimeSpan.FromMilliseconds(100));
             this.result = new BarcodeScannerTask.ScanResult(TaskResult.OK) { Barcode = obj };
             this.foundResult = true;
+            this.scanTimer.Stop();
             NavigationService.GoBack();
         }
 
