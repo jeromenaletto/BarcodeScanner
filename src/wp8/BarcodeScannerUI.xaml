@@ -23,6 +23,10 @@
     shell:SystemTray.IsVisible="True">
 
     <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="80"/>
+        </Grid.RowDefinitions>
         <Canvas x:Name="CameraCanvas">
             <Canvas.Background>
                 <VideoBrush x:Name="CameraBrush">
@@ -35,6 +39,7 @@
                 </VideoBrush>
             </Canvas.Background>
         </Canvas>
+        <Button Grid.Row="1" Click="CancelClicked">Cancel</Button>
     </Grid>
 
 </phone:PhoneApplicationPage>

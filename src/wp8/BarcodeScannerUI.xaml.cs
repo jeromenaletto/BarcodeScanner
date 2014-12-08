@@ -56,13 +56,17 @@ namespace WPCordovaClassLib.Cordova.Commands
 
             // Bind events
             this.camera.Initialized += this.CameraInitialized;
+            this.camera.AutoFocusCompleted += camera_AutoFocusCompleted;
             this.reader.ResultFound += this.ReaderResultFound;
         }
+
+        
 
         /// <summary>
         /// Occurs when barcode scan is [completed].
         /// </summary>
         public event EventHandler<BarcodeScannerTask.ScanResult> Completed;
+        private bool foundResult;
 
         /// <summary>
         /// Called when a page is no longer the active page in a frame.
@@ -90,6 +94,8 @@ namespace WPCordovaClassLib.Cordova.Commands
                 Deployment.Current.Dispatcher.BeginInvoke(
                     () =>
                         {
+                            this.camera.FlashMode = FlashMode.Off;
+                            this.camera.Focus();
                             while (result == null)
                             {
                                 var cameraBuffer = new WriteableBitmap(
@@ -99,6 +105,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                                 camera.GetPreviewBufferArgb32(cameraBuffer.Pixels);
                                 cameraBuffer.Invalidate();
 
+                                reader.Options.TryHarder = true;
                                 reader.Decode(cameraBuffer);
                             }
                         });
@@ -110,6 +117,23 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
         }
 
+        void camera_AutoFocusCompleted(object sender, CameraOperationCompletedEventArgs e)
+        {
+            if (e.Succeeded && !this.foundResult)
+            {
+                camera.Focus();
+            }
+        }
+        /// <summary>
+        /// The user has clicked on Cancel and want to exit scan
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CancelClicked(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.GoBack();
+        }
+
         /// <summary>
         /// Called when reader find barcode.
         /// </summary>
@@ -118,6 +142,7 @@ namespace WPCordovaClassLib.Cordova.Commands
         {
             VibrateController.Default.Start(TimeSpan.FromMilliseconds(100));
             this.result = new BarcodeScannerTask.ScanResult(TaskResult.OK) { Barcode = obj };
+            this.foundResult = true;
             NavigationService.GoBack();
         }
 
@@ -129,6 +154,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             if (this.camera != null)
             {
                 this.camera.Initialized -= this.CameraInitialized;
+                this.camera.AutoFocusCompleted -= this.camera_AutoFocusCompleted;
                 this.camera.Dispose();
                 this.camera = null;
             }
