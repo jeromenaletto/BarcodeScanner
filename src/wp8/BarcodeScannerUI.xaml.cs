@@ -117,6 +117,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                             };
                             scanTimer.Start();
                         });
+                this.Dispatcher.BeginInvoke(() => this.Cancel.IsEnabled = true);                
             }
             else
             {
