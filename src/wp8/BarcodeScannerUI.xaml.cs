@@ -143,7 +143,6 @@ namespace WPCordovaClassLib.Cordova.Commands
             VibrateController.Default.Start(TimeSpan.FromMilliseconds(100));
             this.result = new BarcodeScannerTask.ScanResult(TaskResult.OK) { Barcode = obj };
             this.foundResult = true;
-            this.scanTimer.Stop();
             NavigationService.GoBack();
         }
 
@@ -152,6 +151,10 @@ namespace WPCordovaClassLib.Cordova.Commands
         /// </summary>
         private void CleanUp()
         {
+            if (scanTimer!=null)
+            {
+                this.scanTimer.Stop();
+            }
             if (this.camera != null)
             {
                 this.camera.Initialized -= this.CameraInitialized;
